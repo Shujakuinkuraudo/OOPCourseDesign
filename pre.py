@@ -39,14 +39,21 @@ if __name__=="__main__":
     WordDict = PositionsDict()
     POSDict = PositionsDict()
     WordPOSDict = PositionsDict()
+    BigramDict = PositionsDict()
 
+    obj_prev = None
     for obj in text_obj:
+        if obj_prev and not obj.is_first:
+            BigramDict+Bigram(obj_prev,obj)
         WordPOSDict+[obj.key,obj.position]
         POSDict+[obj.POS,obj.position]
         WordDict+[obj.Text,obj.position]
+        obj_prev = obj
 
     #保存字典
     
+    # print(BigramDict.Dict)
+    dict_to_pkl(BigramDict.Dict,"BigramDict.pkl")
     dict_to_pkl(WordPOSDict.Dict,"WordPOSDict.pkl")
     dict_to_pkl(WordDict.Dict,"WordDict.pkl")
     dict_to_pkl(POSDict.Dict,"POSDict.pkl")

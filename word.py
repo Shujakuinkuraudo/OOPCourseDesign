@@ -1,5 +1,7 @@
 from abc import abstractmethod
 
+from typing import overload
+
 
 class Word:
     def __init__(self,Text="") -> None:
@@ -30,6 +32,20 @@ class WordPOS(Word,POS):
     @property
     def position(self):
         return self.seq
+    
+    @property
+    def is_first(self):
+        return self.seq[1]==0
+
+class Bigram(WordPOS):
+    def __init__(self, prev_WordPOS:WordPOS,now_WordPOS:WordPOS):
+        super().__init__(prev_WordPOS.Text,prev_WordPOS.POS,prev_WordPOS.seq[0],prev_WordPOS.seq[1])
+        self.AnotherText = now_WordPOS.Text
+        self.AnotherPOS = now_WordPOS.POS
+    
+    @property
+    def key(self):
+        return (self.Text,self.POS,self.AnotherText,self.AnotherPOS)
 
 
 class Dict:
@@ -45,18 +61,38 @@ class PositionsDict(Dict):
         super().__init__()
         if other:
             self.Dict = other
+    
+    @overload
+    def __add__(self, Obj:Bigram):
+        pass
+    @overload
+    def __add__(self,Obj:list):
+        pass
 
-    def __add__(self, ObjPosition):
-        key,position = ObjPosition
-        if key not in self.Dict:
-            self.Dict[key] = [position]
+    def __add__(self, Obj):
+        if type(Obj)==list:
+            key,position = Obj 
+            if key not in self.Dict:
+                self.Dict[key] = [position]
+            else: 
+                self.Dict[key].append(position)
         else: 
-            self.Dict[key].append(position)
+            if Obj.key not in self.Dict:
+                self.Dict[Obj.key] = 1
+            else: 
+                self.Dict[Obj.key] += 1
         return self
+
 
     @property
     def itmes(self):
         return self.Dict.items()
+
+    def sort(self,mode):
+        if mode=="Bigram" or mode == "WordPOS":
+            self.Dict = dict(sorted(self.itmes),key = lambda kv:kv[0][0])
+        return self
+
     
     
     
