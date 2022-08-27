@@ -64,19 +64,11 @@ WordDict.to_pkl("data/WordDict.pkl")
 POSDict.to_pkl("data/POSDict.pkl")
 
 # 2．统计语料中的词语、词性及其频次。注意，词语可能有多个词性，要排列在一起。
+
 #排序
 BigramDict.sort(mode="Bigram")
 WordAndPOSDict.sort(mode="WordPOS")
-dict_to_txt([WordDict,POSDict,WordAndPOSDict],"result/2统计.txt")
-dict_to_txt([BigramDict],"result/3Bigram.txt")
-    
 
-
-
-
-
-
-
-    # 5．利用网络，搜索当前词语切分及其词性标注性能好的2个软件，对生语料进行标注。
-
-    # 6．设计方法，比较分析这2个软件的性能哪个更好。
+#保存结果
+IOtools.dict_to_txt([WordDict,POSDict,WordAndPOSDict],"result/2统计.txt")
+IOtools.dict_to_txt([BigramDict],"result/3Bigram.txt")

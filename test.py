@@ -1,12 +1,9 @@
 from word import *
 from utils import *
-import jieba
-import jieba.posseg as posseg
-from snownlp import SnowNLP
 
-jiebaWordEva = WordLineEvaluation("jieba-Word")
+jiebaWordEva = SegLineEvaluation("jieba-Word")
 jiebaPOSEva = POSLineEvaluation("jieba-POS")
-snowWordEva = WordLineEvaluation("snow-Word")
+snowWordEva = SegLineEvaluation("snow-Word")
 snowPOSEva = POSLineEvaluation("snow-POS")
 
 with open("result/4生语料_val.txt","r",encoding="utf-8") as f:
@@ -15,11 +12,12 @@ with open("result/4生语料_val.txt","r",encoding="utf-8") as f:
 
     while True:
 
+        #试验记录
         count+=1
         if(count %200==0):
+            print(count)
             with open("result/5模型评估.txt","a",encoding="utf-8") as fw:
                 string = str(count)+"   "+jiebaWordEva.report()+"   "+jiebaPOSEva.report()+"   "+snowWordEva.report()+"   "+snowPOSEva.report()+"\n"
-                print(string)
                 fw.write(string)
 
         Text = f.readline()
@@ -27,26 +25,21 @@ with open("result/4生语料_val.txt","r",encoding="utf-8") as f:
             break
         TextSplit = Text.split()
         POSSplit = f.readline().split()
+
+        #合并字符串
         TextUnion = ""
         for item in TextSplit:
             TextUnion+=item 
-        jiebaWordEva.compare(TextSplit,jieba.lcut(TextUnion))
-        Snow = SnowNLP(TextUnion)
-        snowWordEva.compare(TextSplit,Snow.words)
+        
+        #snownlp
+        Textseg,TestTextSplit,TestPOSSplit = utils.SegTools.SnownlpSeg(TextUnion)        
+        snowPOSEva.compare(TextSplit,POSSplit,TestTextSplit,TestPOSSplit)
+        snowWordEva.compare(TextSplit,Textseg)
 
-        TestTextSplit = []
-        TestPOSSplit = []
-        for word,POS in posseg.lcut(TextUnion):
-            TestTextSplit.append(word)
-            TestPOSSplit.append(POS)
+        #jieba
+        TextSeg,TestTextSplit,TestPOSSplit = utils.SegTools.JiebaSeg(TextUnion)        
         jiebaPOSEva.compare(TextSplit,POSSplit,TestTextSplit,TestPOSSplit)
-
-        snowTextSplit = []
-        snowPOSSplit = []
-        for word,POS in Snow.tags:
-            snowTextSplit.append(word)
-            snowPOSSplit.append(POS)
-        snowPOSEva.compare(TextSplit,POSSplit,snowTextSplit,snowPOSSplit)
+        jiebaWordEva.compare(TextSplit,Textseg)
 
         
 

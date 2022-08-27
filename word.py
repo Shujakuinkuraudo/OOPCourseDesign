@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import pickle
+import utils
 
 from typing import overload
 
@@ -104,8 +105,9 @@ class PositionsDict(Dict):
         return self
     
     def to_pkl(self,file):
-        with open(file, "wb") as tf:
-            pickle.dump(self.Dict,tf)
+        utils.IOtools.dict_to_pkl(self.Dict,file)
+        # with open(file, "wb") as tf:
+        #     pickle.dump(self.Dict,tf)
 
     
     

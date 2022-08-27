@@ -1,34 +1,60 @@
 import json
 import pickle
 import os
+import jieba
+from snownlp import SnowNLP
+import jieba.posseg as posseg
 
-from pyparsing import Or
+#io工具类封装
+class IOtools:
+    @staticmethod
+    def dict_to_pkl(dict:dict,file:str):
+        with open(file, "wb") as tf:
+            pickle.dump(dict,tf)
 
-def dict_to_pkl(dict,file):
-    with open(file, "wb") as tf:
-        pickle.dump(dict,tf)
+    @staticmethod
+    def pkl_to_dict(file:str):
+        with open(file, "rb") as tf:
+            return pickle.load(tf)
 
-def pkl_to_dict(file):
-    with open(file, "rb") as tf:
-        return pickle.load(tf)
+    @staticmethod
+    def dict_to_txt(dicts:list,file:str,mode=""):
+        if not os.path.exists(file):
+            with open(file,"w",encoding="utf-8") as f:
+                for dict in dicts:
+                    string = ""
+                    if mode=="len":
+                        for k,v in dict.items:
+                            string+=str(k)+" "+str(len(v))+"  "
+                    else:
+                        for k,v in dict.items:
+                            string+=str(k)+" "+str(v)+"  "
+                    string +='\n'
+                    f.write(string)
 
-def dict_to_txt(dicts,file,mode=""):
-    if not os.path.exists(file):
-        with open(file,"w",encoding="utf-8") as f:
-            for dict in dicts:
-                string = ""
-                if mode=="len":
-                    for k,v in dict.items:
-                        string+=str(k)+" "+str(len(v))+"  "
-                else:
-                    for k,v in dict.items:
-                        string+=str(k)+" "+str(v)+"  "
-                string +='\n'
-                f.write(string)
-
+class SegTools:
+    @staticmethod
+    def SnownlpSeg(sentence) -> list:
+        sentence = SnowNLP(sentence)
+        POSSplit = []
+        WordSplit = []
+        for Word,POS in sentence.tags:
+            POSSplit.append(POS)
+            WordSplit.append(Word)
+        return [sentence.words,WordSplit,POSSplit]
+        
+    @staticmethod
+    def JiebaSeg(sentence) -> list:
+        POSSplit = []
+        WordSplit = []
+        for Word,POS in posseg.lcut(sentence):
+            POSSplit.append(POS)
+            WordSplit.append(Word)
+        return [jieba.lcut(sentence),WordSplit,POSSplit]
+        
 
 class Evaluation:
-    def __init__(self,Name) -> None:
+    def __init__(self,Name:str) -> None:
         self.Name = Name
         self.CorrectCount = 0
         self.OriginalCount = 0
@@ -46,7 +72,7 @@ class Evaluation:
 
 
 class LineEvaluation(Evaluation):
-    def __init__(self, Name) -> None:
+    def __init__(self, Name:str) -> None:
         super().__init__(Name)
     
     
@@ -60,8 +86,8 @@ class LineEvaluation(Evaluation):
             if item in OriginalIndex:
                 self.CorrectCount += 1
 
-class WordLineEvaluation(LineEvaluation):
-    def __init__(self, Name) -> None:
+class SegLineEvaluation(LineEvaluation):
+    def __init__(self, Name:str) -> None:
         super().__init__(Name)
 
     def list_to_index(self,l:list) -> list:
@@ -75,7 +101,7 @@ class WordLineEvaluation(LineEvaluation):
             LIndex.append(WordIndex)
         return LIndex
     
-    def compare(self,Original,Test):
+    def compare(self,Original:list,Test:list):
         OriginalIndex = self.list_to_index(Original)
         TestIndex = self.list_to_index(Test)
         super().compare(OriginalIndex,TestIndex)
@@ -95,21 +121,7 @@ class POSLineEvaluation(LineEvaluation):
             LIndex.append(WordIndex)
         return LIndex
 
-    def compare(self,OriginalWord,OriginalPOS,TestWord,TestPOS):
+    def compare(self,OriginalWord:list,OriginalPOS:list,TestWord:list,TestPOS:list):
         OriginalIndex = self.list_to_index(OriginalWord,OriginalPOS)
         TestIndex = self.list_to_index(TestWord,TestPOS)
         super().compare(OriginalIndex,TestIndex)
-
-
-        
-
-    
-if __name__ == "__main__":
-    A = LineEvaluation("123")
-    a = ["123","123","2223"]
-    b = ["123","123","2","223"]
-    A.compare(a,b)
-    print(A.report())
-
-    
-    
