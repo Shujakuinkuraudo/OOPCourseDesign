@@ -1,9 +1,11 @@
 import json
-import pickle
 import os
+import pickle
+
 import jieba
-from snownlp import SnowNLP
 import jieba.posseg as posseg
+from snownlp import SnowNLP
+import time
 
 # io工具类封装
 
@@ -57,6 +59,7 @@ class SegTools:
 
 
 class Evaluation:
+
     def __init__(self, Name: str) -> None:
         self.Name = Name
         self.CorrectCount = 0
@@ -74,6 +77,7 @@ class Evaluation:
 
 
 class LineEvaluation(Evaluation):
+
     def __init__(self, Name: str) -> None:
         super().__init__(Name)
 
@@ -88,6 +92,7 @@ class LineEvaluation(Evaluation):
 
 
 class SegLineEvaluation(LineEvaluation):
+
     def __init__(self, Name: str) -> None:
         super().__init__(Name)
 
@@ -109,6 +114,7 @@ class SegLineEvaluation(LineEvaluation):
 
 
 class POSLineEvaluation(LineEvaluation):
+
     def __init__(self, Name) -> None:
         super().__init__(Name)
 

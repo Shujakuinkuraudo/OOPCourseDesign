@@ -1,22 +1,47 @@
-from abc import abstractmethod
 import pickle
+from abc import abstractmethod
+from typing import overload
+
 import utils
 
-from typing import overload
+
+class WordAndPOS:...
 
 
 class Word:
-    def __init__(self, Text="") -> None:
-        self.Text = Text
+
+    @overload
+    def __init__(self, WAP: WordAndPOS):...
+
+    @overload
+    def __init__(self, Text: str):...
+
+    def __init__(self, *args) -> None: 
+        """ 一个词"""
+        if type(args[0]) == WordAndPOS:
+            self.Word = args[0].Word
+        if type(args[0]) == str:
+            self.Word = args[0]
 
     @property
     def key(self):
-        return (self.Text)
+        return (self.Word)
 
 
 class POS:  # part of speech
-    def __init__(self, PoS="") -> None:
-        self.POS = PoS
+
+    @overload
+    def __init__(self, WAP: WordAndPOS):...
+
+    @overload
+    def __init__(self, POS: str):...
+
+    def __init__(self, *args) -> None:
+        """"一个词性"""
+        if type(args[0]) == WordAndPOS:
+            self.POS = args[0].POS
+        if type(args[0]) == str:
+            self.POS = args[0]
 
     @property
     def key(self):
@@ -24,14 +49,16 @@ class POS:  # part of speech
 
 
 class WordAndPOS(Word, POS):
-    def __init__(self, Text="", PoS="", LineSeq=0, WordSeq=0) -> None:
-        Word.__init__(self, Text)
+
+    def __init__(self, word="", PoS="", LineSeq=0, WordSeq=0) -> None:
+        """"一个词和词性对 出现的位置"""
+        Word.__init__(self, word)
         POS.__init__(self, PoS)
         self.seq = [LineSeq, WordSeq]
 
     @property
     def key(self):
-        return (self.Text, self.POS)
+        return (self.Word, self.POS)
 
     @property
     def position(self):
@@ -43,25 +70,28 @@ class WordAndPOS(Word, POS):
 
 
 class Bigram(WordAndPOS):
+
     def __init__(self, prev_WordAndPOS: WordAndPOS, now_WordAndPOS: WordAndPOS):
-        super().__init__(prev_WordAndPOS.Text, prev_WordAndPOS.POS,
+        """"两个词和词性对 第一个对出现的位置"""
+        super().__init__(prev_WordAndPOS.Word, prev_WordAndPOS.POS,
                          prev_WordAndPOS.seq[0], prev_WordAndPOS.seq[1])
-        self.AnotherText = now_WordAndPOS.Text
+        self.AnotherWord = now_WordAndPOS.Word
         self.AnotherPOS = now_WordAndPOS.POS
 
     @property
     def key(self):
-        return (self.Text, self.POS, self.AnotherText, self.AnotherPOS)
+        return (self.Word, self.POS, self.AnotherWord, self.AnotherPOS)
 
 
 class Dict:
-    def __init__(self,name="") -> None:
+
+    def __init__(self, name="") -> None:
+        """一个通用字典"""
         self.Dict = dict()
         self.Name = name
 
     @abstractmethod
-    def __add__(self, obj):
-        pass
+    def __add__(self, obj):...
 
     @property
     def items(self):
@@ -77,26 +107,26 @@ class Dict:
 
 
 class PositionsDict(Dict):
-    def __init__(self, name="",other=None) -> None:
+
+    def __init__(self, name="", other=None) -> None:
+        """"一个字典添加位置或数量"""
         super().__init__(name)
         if other:
             self.Dict = other
 
     @overload
-    def __add__(self, Obj: Bigram):
-        pass
+    def __add__(self, Obj: Bigram):...
 
     @overload
-    def __add__(self, Obj: list):
-        pass
+    def __add__(self, ObjAndPos: list):...
 
     def __add__(self, Obj):
         if type(Obj) == list:
-            key, position = Obj
-            if key not in self.Dict:
-                self.Dict[key] = [position]
+            obj, position = Obj
+            if obj.key not in self.Dict:
+                self.Dict[obj.key] = [position]
             else:
-                self.Dict[key].append(position)
+                self.Dict[obj.key].append(position)
         else:
             if Obj.key not in self.Dict:
                 self.Dict[Obj.key] = 1

@@ -1,5 +1,5 @@
-from word import *
 from utils import *
+from word import *
 
 jiebaWordEva = SegLineEvaluation("jieba-Word")
 jiebaPOSEva = POSLineEvaluation("jieba-POS")
