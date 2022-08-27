@@ -2,7 +2,7 @@ a=[1,1,3,4,5,6,7]
 a = "1231/123"
 # print(a.split("/"))
 from word import *
-a = WordPOS("13123","123123")
+a = WordAndPOS("13123","123123")
 # print(POS.key(a))
 class A:
     def __init__(self) -> None:
