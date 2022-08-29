@@ -50,23 +50,29 @@ input[type="submit"]:focus {
     <meta charset="UTF-8">
     <title>词性分割</title>
 </head>
-<div style="width:100%;text-align:center">
-    <form action="/seg" method="POST">
-        <h1>词性分割</h1>
-        <!-- <input type="text" name="st"  style="width:200px; height: 400px;;"><br/> -->
-        <h3>请输入您想要分割的句或段</h3>
-            <textarea name="string" style="width: 50%;height:200px;">{{original}} </textarea>
-            <br />
-            <div class="button-border">
-            <input type="submit" value="生成" class="button">
-            </div>
-            <textarea style="width: 50%;height:200px;">{{seg}}</textarea>
-            <textarea style="width: 50%;height:200px;">{{posseg}}</textarea>
-    </form>
-</div>
 
 
 <body>
+    <div style="width:100%;text-align:center">
+        <form action="/seg" method="POST">
+            <h1>词性分割</h1>
+            <!-- <input type="text" name="st"  style="width:200px; height: 400px;;"><br/> -->
+            <h3>请输入您想要分割的句或段</h3>
+            <textarea name="string" style="width: 50%;height:200px;">{{original}} </textarea>
+            <br />
+            请选择内核:<select name="core">
+                <option value="SnownlpSeg">snownlp</option>
+                <option value="JiebaSeg">jieba</option>
+            </select>
+            <div class="button-border">
+                <input type="submit" value="生成" class="button">
+            </div>
+            <h3>分割结果</h3>
+            <textarea style="width: 50%;height:200px;">{{seg}}</textarea>
+            <h3>词性分割结果</h3>
+            <textarea style="width: 50%;height:200px;">{{posseg}}</textarea>
+        </form>
+    </div>
 </body>
 
 </html>

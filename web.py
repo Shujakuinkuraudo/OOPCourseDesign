@@ -8,12 +8,13 @@ app = Flask(__name__)
 
 @app.route('/',methods = ['POST','GET'])
 def index():
-    return render_template("test.html")
+    return render_template("seg.html")
 
 
 @app.route('/seg',methods = ['POST','GET'])
 def login():
     string = request.form.get('string')
+    core = request.form.get('core')
     seg = ""
     posseg = ""
     if string:
@@ -25,14 +26,16 @@ def login():
             if sentence:
                 seg += "line" + str(count)  +"   "
                 posseg += "line" + str(count)  +"   "
-                Textposseg, TestTextSplit, TestPOSSplit = utils.SegTools.SnownlpSeg(sentence)
+                SegTool = eval(f"utils.SegTools.{core}")
+                Textposseg, TestTextSplit, TestPOSSplit = SegTool(sentence)
                 for i in range(len(TestTextSplit)):
                     seg += f"{TestTextSplit[i]} "
                     posseg += f"{TestTextSplit[i]}\\{TestPOSSplit[i]} "
                 seg += "\r\n"
                 posseg += "\r\n"
-    return render_template('test.html',posseg=posseg,original=string,seg=seg)
+    return render_template('seg.html',posseg=posseg,original=string,seg=seg)
     # return render_template('test.html',msg = "登录失败！")
 
 
-app.run(debug = True)
+from waitress import serve
+serve(app, host="0.0.0.0", port=5000)
