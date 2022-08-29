@@ -41,7 +41,8 @@ if not os.path.exists("result/4生语料_val.txt"):
         f.write(article)
 
 # 创建统计字典
-Dicts = [PositionsDict("Word"), PositionsDict("POS"), PositionsDict("WordAndPOS"), PositionsDict("BigramDict")]
+Dicts = [PositionsDict("Word"), PositionsDict("POS"), PositionsDict(
+    "WordAndPOS"), PositionsDict("BigramDict")]
 
 print("正在统计语料")
 
