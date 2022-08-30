@@ -18,6 +18,7 @@ class Word:
 
     def __init__(self, *args) -> None: 
         """ 一个词"""
+        self.Word = ""
         if type(args[0]) == WordAndPOS:
             self.Word = args[0].Word
         if type(args[0]) == str:
@@ -37,6 +38,7 @@ class POS:  # part of speech
     def __init__(self, POS: str):...
 
     def __init__(self, *args) -> None:
+        self.POS = ""
         """"一个词性"""
         if type(args[0]) == WordAndPOS:
             self.POS = args[0].POS
@@ -75,6 +77,7 @@ class Bigram(WordAndPOS):
         """"两个词和词性对 第一个对出现的位置"""
         super().__init__(prev_WordAndPOS.Word, prev_WordAndPOS.POS,
                          prev_WordAndPOS.seq[0], prev_WordAndPOS.seq[1])
+        self.AnotherWord = self.AnotherPOS = ""
         self.AnotherWord = now_WordAndPOS.Word
         self.AnotherPOS = now_WordAndPOS.POS
 
@@ -108,11 +111,9 @@ class Dict:
 
 class PositionsDict(Dict):
 
-    def __init__(self, name="", other=None) -> None:
+    def __init__(self, name="") -> None:
         """"一个字典添加位置或数量"""
         super().__init__(name)
-        if other:
-            self.Dict = other
 
     @overload
     def __add__(self, Obj: Bigram):...
@@ -134,12 +135,12 @@ class PositionsDict(Dict):
                 self.Dict[Obj.key] += 1
         return self
 
-    def sort(self, mode):
+    def sort(self, mode:str):
         if mode == "Bigram" or mode == "WordAndPOS":
             self.Dict = dict(sorted(self.items), key=lambda kv: kv[0][0])
         else:
             self.Dict = dict(sorted(self.items), key=lambda kv: kv[0])
         return self
 
-    def to_pkl(self, file):
+    def to_pkl(self, file:str):
         utils.IOtools.dict_to_pkl(self.Dict, file)

@@ -19,6 +19,7 @@ with open("result/4生语料_val.txt", "r", encoding="utf-8") as f:
             with open("result/5模型评估.txt", "a", encoding="utf-8") as fw:
                 string = str(count)+"   "+jiebaWordEva.report()+"   "+jiebaPOSEva.report() + \
                     "   "+snowWordEva.report()+"   "+snowPOSEva.report()+"\n"
+                print(string)
                 fw.write(string)
 
         Text = f.readline()

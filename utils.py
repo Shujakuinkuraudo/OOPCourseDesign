@@ -12,17 +12,17 @@ import time
 
 class IOtools:
     @staticmethod
-    def dict_to_pkl(dict: dict, file: str):
+    def dict_to_pkl(dict: dict, file: str) -> None:
         with open(file, "wb") as tf:
             pickle.dump(dict, tf)
 
     @staticmethod
-    def pkl_to_dict(file: str):
+    def pkl_to_dict(file: str) -> None:
         with open(file, "rb") as tf:
             return pickle.load(tf)
 
     @staticmethod
-    def dict_to_txt(dicts: list, file: str, mode=""):
+    def dict_to_txt(dicts: list, file: str, mode="") -> None:
         if not os.path.exists(file):
             with open(file, "w", encoding="utf-8") as f:
                 for dict in dicts:
@@ -39,7 +39,7 @@ class IOtools:
 
 class SegTools:
     @staticmethod
-    def SnownlpSeg(sentence) -> list:
+    def SnownlpSeg(sentence:str) -> list:
         sentence = SnowNLP(sentence)
         POSSplit = []
         WordSplit = []
@@ -49,7 +49,7 @@ class SegTools:
         return [sentence.words, WordSplit, POSSplit]
 
     @staticmethod
-    def JiebaSeg(sentence) -> list:
+    def JiebaSeg(sentence:str) -> list:
         POSSplit = []
         WordSplit = []
         for Word, POS in posseg.lcut(sentence):
@@ -81,7 +81,7 @@ class LineEvaluation(Evaluation):
     def __init__(self, Name: str) -> None:
         super().__init__(Name)
 
-    def compare(self, OriginalIndex: list, TestIndex: list):
+    def compare(self, OriginalIndex: list, TestIndex: list) -> None:
         self.OriginalCount += len(OriginalIndex)
         self.TestCount += len(TestIndex)
 
@@ -107,7 +107,7 @@ class SegLineEvaluation(LineEvaluation):
             LIndex.append(WordIndex)
         return LIndex
 
-    def compare(self, Original: list, Test: list):
+    def compare(self, Original: list, Test: list) -> None:
         OriginalIndex = self.list_to_index(Original)
         TestIndex = self.list_to_index(Test)
         super().compare(OriginalIndex, TestIndex)
@@ -115,10 +115,10 @@ class SegLineEvaluation(LineEvaluation):
 
 class POSLineEvaluation(LineEvaluation):
 
-    def __init__(self, Name) -> None:
+    def __init__(self, Name:str) -> None:
         super().__init__(Name)
 
-    def list_to_index(self, Word: list, POS: list):
+    def list_to_index(self, Word: list, POS: list) -> list:
         LIndex = []
         index = 0
         for i in range(len(Word)):
@@ -129,7 +129,7 @@ class POSLineEvaluation(LineEvaluation):
             LIndex.append(WordIndex)
         return LIndex
 
-    def compare(self, OriginalWord: list, OriginalPOS: list, TestWord: list, TestPOS: list):
+    def compare(self, OriginalWord: list, OriginalPOS: list, TestWord: list, TestPOS: list) -> None:
         OriginalIndex = self.list_to_index(OriginalWord, OriginalPOS)
         TestIndex = self.list_to_index(TestWord, TestPOS)
         super().compare(OriginalIndex, TestIndex)
